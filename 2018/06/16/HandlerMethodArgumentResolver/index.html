@@ -79,13 +79,17 @@
 
 
 
-<meta property="og:type" content="website">
-<meta property="og:title" content="SecondHome">
-<meta property="og:url" content="http://secondhj.github.io/blog/index.html">
+<meta name="description" content="SpringMVC 之 —— HandlerMethodArgumentResolverHandlerMethodArgumentResolver  是SpringMVC在封装方法参数的核心接口。SpringMVC 在这里应用了策略模式定义了一群 “XXXArgumentResolver”，每个 ArgumentResolver 通过实现 HandlerMethodArgumentResolver">
+<meta property="og:type" content="article">
+<meta property="og:title" content="SpringMVC 之 —— HandlerMethodArgumentResolver">
+<meta property="og:url" content="http://secondhj.github.io/blog/2018/06/16/HandlerMethodArgumentResolver/index.html">
 <meta property="og:site_name" content="SecondHome">
+<meta property="og:description" content="SpringMVC 之 —— HandlerMethodArgumentResolverHandlerMethodArgumentResolver  是SpringMVC在封装方法参数的核心接口。SpringMVC 在这里应用了策略模式定义了一群 “XXXArgumentResolver”，每个 ArgumentResolver 通过实现 HandlerMethodArgumentResolver">
 <meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2018-06-16T04:50:35.418Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="SecondHome">
+<meta name="twitter:title" content="SpringMVC 之 —— HandlerMethodArgumentResolver">
+<meta name="twitter:description" content="SpringMVC 之 —— HandlerMethodArgumentResolverHandlerMethodArgumentResolver  是SpringMVC在封装方法参数的核心接口。SpringMVC 在这里应用了策略模式定义了一群 “XXXArgumentResolver”，每个 ArgumentResolver 通过实现 HandlerMethodArgumentResolver">
 
 
 
@@ -115,13 +119,13 @@
 
 
 
-  <link rel="canonical" href="http://secondhj.github.io/blog/"/>
+  <link rel="canonical" href="http://secondhj.github.io/blog/2018/06/16/HandlerMethodArgumentResolver/"/>
 
 
 
 
 
-  <title>SecondHome</title>
+  <title>SpringMVC 之 —— HandlerMethodArgumentResolver | SecondHome</title>
   
 
 
@@ -140,8 +144,7 @@
     
   
 
-  <div class="container sidebar-position-left 
-  page-home">
+  <div class="container sidebar-position-left page-post-detail">
     <div class="headband"></div>
 
     <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
@@ -214,9 +217,9 @@
         <div class="content-wrap">
           <div id="content" class="content">
             
-  <section id="posts" class="posts-expand">
+
+  <div id="posts" class="posts-expand">
     
-      
 
   
 
@@ -246,9 +249,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/blog/2018/06/16/HandlerMethodArgumentResolver/" itemprop="url">SpringMVC 之 —— HandlerMethodArgumentResolver</a></h1>
+          <h1 class="post-title" itemprop="name headline">SpringMVC 之 —— HandlerMethodArgumentResolver</h1>
         
 
         <div class="post-meta">
@@ -298,9 +299,7 @@
       
 
       
-        
-          
-            <h1 id="SpringMVC-之-——-HandlerMethodArgumentResolver"><a href="#SpringMVC-之-——-HandlerMethodArgumentResolver" class="headerlink" title="SpringMVC 之 —— HandlerMethodArgumentResolver"></a>SpringMVC 之 —— HandlerMethodArgumentResolver</h1><p><strong>HandlerMethodArgumentResolver</strong>  是SpringMVC在封装方法参数的核心接口。<br>SpringMVC 在这里应用了策略模式定义了一群 “XXXArgumentResolver”，每个 ArgumentResolver 通过实现 <strong>HandlerMethodArgumentResolver</strong> 接口来定义 Controller 方法的参数传入  </p>
+        <h1 id="SpringMVC-之-——-HandlerMethodArgumentResolver"><a href="#SpringMVC-之-——-HandlerMethodArgumentResolver" class="headerlink" title="SpringMVC 之 —— HandlerMethodArgumentResolver"></a>SpringMVC 之 —— HandlerMethodArgumentResolver</h1><p><strong>HandlerMethodArgumentResolver</strong>  是SpringMVC在封装方法参数的核心接口。<br>SpringMVC 在这里应用了策略模式定义了一群 “XXXArgumentResolver”，每个 ArgumentResolver 通过实现 <strong>HandlerMethodArgumentResolver</strong> 接口来定义 Controller 方法的参数传入  </p>
 <p>这个接口的代码如下:<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">HandlerMethodArgumentResolver</span> </span>&#123;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">boolean</span> <span class="title">supportsParameter</span><span class="params">(MethodParameter parameter)</span></span>;</span><br><span class="line">    </span><br><span class="line">    <span class="function">Object <span class="title">resolveArgument</span><span class="params">(MethodParameter parameter, ModelAndViewContainer mavContainer,</span></span></span><br><span class="line"><span class="function"><span class="params">    		NativeWebRequest webRequest, WebDataBinderFactory binderFactory)</span> <span class="keyword">throws</span> Exception</span>;</span><br><span class="line">    </span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure></p>
 <p><strong>supportsParameter：</strong> 返回一个布尔值，定义了该参数是否需要被 ArgumentResolver 处理<br><strong>resolveArgument：</strong> 返回需要传入的该参数的对象  </p>
 <p>MethodParameter 是 SpringMVC 定义的参数对象，可通过 MethodParameter 获取方法参数的类型、名称、位置、注解等信息，从而定义是否要传入该参数以及如何传入。</p>
@@ -310,8 +309,6 @@
 <p>再返回 resolver 到 resolveArgument 方法去处理对应参数传入:<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">	 * Iterate over registered &#123;<span class="doctag">@link</span> HandlerMethodArgumentResolver&#125;s and invoke the one that supports it.</span></span><br><span class="line"><span class="comment">	 * <span class="doctag">@throws</span> IllegalStateException if no suitable &#123;<span class="doctag">@link</span> HandlerMethodArgumentResolver&#125; is found.</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> Object <span class="title">resolveArgument</span><span class="params">(MethodParameter parameter, ModelAndViewContainer mavContainer,</span></span></span><br><span class="line"><span class="function"><span class="params">			NativeWebRequest webRequest, WebDataBinderFactory binderFactory)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        <span class="comment">// 获取到上一步返回的 resolver</span></span><br><span class="line">		HandlerMethodArgumentResolver resolver = getArgumentResolver(parameter);</span><br><span class="line">		<span class="keyword">if</span> (resolver == <span class="keyword">null</span>) &#123;</span><br><span class="line">			<span class="keyword">throw</span> <span class="keyword">new</span> IllegalArgumentException(<span class="string">"Unknown parameter type ["</span> + parameter.getParameterType().getName() + <span class="string">"]"</span>);</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="comment">// 调用 resolver 的 resolveArgument 方法获取到将要传入参数的对象</span></span><br><span class="line">		<span class="keyword">return</span> resolver.resolveArgument(parameter, mavContainer, webRequest, binderFactory);</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure></p>
 <p><strong>HandlerMethodArgumentResolverComposite</strong> 的resolveArgument会返回对应resolver返回的实际要传入方法的对象，再由 <strong>InvocableHandlerMethod</strong> 类把获取到的对象通过反射invoke方法并将上面获取到的对象传入被调用的Controller方法（这里就不一一列出来了），到这里SpringMVC是如何处理方法参数的流程就已经大致清楚了。</p>
 
-          
-        
       
     </div>
     
@@ -328,132 +325,28 @@
       
 
       
-
-      
-
       
       
-        <div class="post-eof"></div>
+
       
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://secondhj.github.io/blog/blog/2018/06/02/博客迁移/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Johnny Jiang">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/blog/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="SecondHome">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/blog/2018/06/02/博客迁移/" itemprop="url">博客迁移</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
             
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Posted on</span>
-              
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-06-02T10:53:20+08:00">
-                2018-06-02
-              </time>
+              <a href="/blog/2018/06/02/博客迁移/" rel="next" title="博客迁移">
+                <i class="fa fa-chevron-left"></i> 博客迁移
+              </a>
             
+          </div>
 
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
             
-
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
+          </div>
         </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
       
 
       
-        
-          
-            <p>由于在自己的VPS上搭建的WordPress太不方便维护，随时可能遇到各种恶意刷评论、暴力破解，只好把它迁移到Github上来。</p>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
       
     </footer>
   </div>
@@ -463,10 +356,11 @@
   </article>
 
 
-    
-  </section>
 
-  
+    <div class="post-spread">
+      
+    </div>
+  </div>
 
 
           </div>
@@ -474,6 +368,10 @@
 
 
           
+
+  
+
+
 
         </div>
         
@@ -494,8 +392,17 @@
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
 
-      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
+      <section class="site-overview-wrap sidebar-panel">
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
             
@@ -537,6 +444,22 @@
         </div>
       </section>
 
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#SpringMVC-之-——-HandlerMethodArgumentResolver"><span class="nav-number">1.</span> <span class="nav-text">SpringMVC 之 —— HandlerMethodArgumentResolver</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
       
 
       
@@ -670,6 +593,10 @@
   
 
   
+  <script type="text/javascript" src="/blog/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/blog/js/src/post-details.js?v=5.1.4"></script>
+
+
 
   
 
