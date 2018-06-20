@@ -79,17 +79,17 @@
 
 
 
-<meta name="description" content="由于在自己的VPS上搭建的WordPress太不方便维护，随时可能遇到各种恶意刷评论、暴力破解，只好把它迁移到Github上来。">
+<meta name="description" content="在上一篇 HandlerMethodArgumentResolver 中，在SpringMVC获取dArgumentResolver 中提到了getDefaultArgumentResolvers 这个方法。这个方法获取了我们所有自定义的 ArgumentResolver 所以我们可以通过  HandlerMethodArgumentResolver 接口自定义一个 ArgumentResolve">
 <meta property="og:type" content="article">
-<meta property="og:title" content="博客迁移">
-<meta property="og:url" content="https://secondhj.github.io/2018/06/02/博客迁移/index.html">
+<meta property="og:title" content="SpringMVC 之 —— 自定义 HandlerMethodArgumentResolver">
+<meta property="og:url" content="https://secondhj.github.io/2018/06/20/自定义HandlerMethodArgumentResolver/index.html">
 <meta property="og:site_name" content="SecondHome">
-<meta property="og:description" content="由于在自己的VPS上搭建的WordPress太不方便维护，随时可能遇到各种恶意刷评论、暴力破解，只好把它迁移到Github上来。">
+<meta property="og:description" content="在上一篇 HandlerMethodArgumentResolver 中，在SpringMVC获取dArgumentResolver 中提到了getDefaultArgumentResolvers 这个方法。这个方法获取了我们所有自定义的 ArgumentResolver 所以我们可以通过  HandlerMethodArgumentResolver 接口自定义一个 ArgumentResolve">
 <meta property="og:locale" content="default">
-<meta property="og:updated_time" content="2018-06-02T02:58:03.735Z">
+<meta property="og:updated_time" content="2018-06-20T13:38:14.205Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="博客迁移">
-<meta name="twitter:description" content="由于在自己的VPS上搭建的WordPress太不方便维护，随时可能遇到各种恶意刷评论、暴力破解，只好把它迁移到Github上来。">
+<meta name="twitter:title" content="SpringMVC 之 —— 自定义 HandlerMethodArgumentResolver">
+<meta name="twitter:description" content="在上一篇 HandlerMethodArgumentResolver 中，在SpringMVC获取dArgumentResolver 中提到了getDefaultArgumentResolvers 这个方法。这个方法获取了我们所有自定义的 ArgumentResolver 所以我们可以通过  HandlerMethodArgumentResolver 接口自定义一个 ArgumentResolve">
 
 
 
@@ -119,13 +119,13 @@
 
 
 
-  <link rel="canonical" href="https://secondhj.github.io/2018/06/02/博客迁移/"/>
+  <link rel="canonical" href="https://secondhj.github.io/2018/06/20/自定义HandlerMethodArgumentResolver/"/>
 
 
 
 
 
-  <title>博客迁移 | SecondHome</title>
+  <title>SpringMVC 之 —— 自定义 HandlerMethodArgumentResolver | SecondHome</title>
   
 
 
@@ -232,7 +232,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://secondhj.github.io/2018/06/02/博客迁移/">
+    <link itemprop="mainEntityOfPage" href="https://secondhj.github.io/2018/06/20/自定义HandlerMethodArgumentResolver/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Johnny Jiang">
@@ -249,7 +249,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">博客迁移</h1>
+          <h1 class="post-title" itemprop="name headline">SpringMVC 之 —— 自定义 HandlerMethodArgumentResolver</h1>
         
 
         <div class="post-meta">
@@ -261,8 +261,8 @@
               
                 <span class="post-meta-item-text">Posted on</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-06-02T10:53:20+08:00">
-                2018-06-02
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-06-20T21:37:03+08:00">
+                2018-06-20
               </time>
             
 
@@ -299,7 +299,12 @@
       
 
       
-        <p>由于在自己的VPS上搭建的WordPress太不方便维护，随时可能遇到各种恶意刷评论、暴力破解，只好把它迁移到Github上来。</p>
+        <p>在上一篇 <strong>HandlerMethodArgumentResolver</strong> 中，在SpringMVC获取dArgumentResolver 中提到了getDefaultArgumentResolvers 这个方法。<br>这个方法获取了我们所有自定义的 ArgumentResolver 所以我们可以通过  <strong>HandlerMethodArgumentResolver</strong> 接口自定义一个 ArgumentResolver， 让SpringMVC自动将指定的对象传入到Controller的方法中。  </p>
+<p>这里最常见的就是在Controller中获取登陆信息了。一般获取登陆用户会单独定义一个方法，从Session或着Redis中获取用户信息。但这样不好的地方是我们需要在每个接口方法里都要调用一次获取用户的方法，产生很多不必要的重复代码。    </p>
+<p><strong>试想，假如SpringMVC可以代替我们自动将User信息传入接口方法，是不是就变得很简洁了呢？</strong>  </p>
+<p>为了达到这个功能，我们就需要和其他参数Resolver一样，定义一个 <strong>LoginUserArugmentResolver</strong> 并实现 <strong>HandlerMethodArgumentResolver</strong> 接口，代码如下:<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">LoginUserArugmentResolver</span> <span class="keyword">implements</span> <span class="title">HandlerMethodArgumentResolver</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">supportsParameter</span><span class="params">(MethodParameter parameter)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> parameter.getParameterType() == User.class;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Object <span class="title">resolveArgument</span><span class="params">(MethodParameter parameter, ModelAndViewContainer mavContainer, NativeWebRequest webRequest, WebDataBinderFactory binderFactory)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> webRequest.getNativeRequest(HttpServletRequest.class).getSession().getAttribute(Login.user);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">&#125;</span><br><span class="line">```   </span><br><span class="line"></span><br><span class="line">实现 **supportsParameter** 方法，定义在参数类型为User类型时，使用此Resolver传入参数。这里还可以通过 MethodParameter 参数定义其他条件，如参数注解等。</span><br><span class="line">   </span><br><span class="line">实现 **resolveArgument** 方法，从webRequest对象中获取Session再拿出存入的User信息对象并返回。</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">然后我们可以通过继承了 **WebMvcConfigurerAdapter** 的配置类重写 **addArgumentResolvers** 方法，将我们自定义的Resolver交给SpringMVC接管，代码如下：</span><br><span class="line">```java</span><br><span class="line">    <span class="comment">// 定义 LoginUserArugmentResolver 的 Bean 对象</span></span><br><span class="line">	<span class="meta">@Bean</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> LoginUserArugmentResolver <span class="title">loginUserArugmentResolver</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="keyword">new</span> LoginUserArugmentResolver();</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">    <span class="comment">// 将 LoginUserArugmentResolver 加入到 argumentResolvers</span></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">addArgumentResolvers</span> <span class="params">(List&lt;HandlerMethodArgumentResolver&gt; argumentResolvers)</span> </span>&#123;</span><br><span class="line">		argumentResolvers.add(loginUserArugmentResolver());</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure></p>
+<p>完成之后，在Controller中我们就可以直接获取到用户信息了<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@RequestMapping</span>(value = <span class="string">"addProduct"</span>, produces = <span class="string">"application/json"</span>)</span><br><span class="line"><span class="function"><span class="keyword">public</span> String <span class="title">addCarExtra</span><span class="params">(@RequestBody Product product, User user)</span></span>&#123;</span><br><span class="line">    productService.addProduct(product, user);</span><br><span class="line">    <span class="keyword">return</span> xxx;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>这样，我们就实现了一个自定义的ArgumentResolver。</p>
 
       
     </div>
@@ -324,15 +329,15 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
+              <a href="/2018/06/16/HandlerMethodArgumentResolver/" rel="next" title="SpringMVC 之 —— HandlerMethodArgumentResolver">
+                <i class="fa fa-chevron-left"></i> SpringMVC 之 —— HandlerMethodArgumentResolver
+              </a>
+            
           </div>
 
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2018/06/16/HandlerMethodArgumentResolver/" rel="prev" title="SpringMVC 之 —— HandlerMethodArgumentResolver">
-                SpringMVC 之 —— HandlerMethodArgumentResolver <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
